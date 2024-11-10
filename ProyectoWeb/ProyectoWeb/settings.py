@@ -139,6 +139,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+STATICFILES_DIRS = [
+    BASE_DIR / "ProyectoWebApp" / "static",  # Correcto, apunta a 'static' dentro de 'ProyectoWebApp'
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"  # Este es el directorio donde se recolectarán los archivos estáticos
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
