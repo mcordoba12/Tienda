@@ -1,0 +1,92 @@
+{% extends 'ProyectoWebApp/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div style="margin-top: 20px;"></div>
+
+<!-- Contenedor para mensajes de éxito o error -->
+<div id="message-container"></div>
+
+<!-- Formulario de registro -->
+<form id="registroForm" style="width: 75%; margin: auto; color: white;" onsubmit="registrarse(event)">
+    <div class="form-group">
+        <label for="username">Nombre de usuario</label>
+        <input type="text" class="form-control" id="username" name="username" required>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+
+    <div class="form-group">
+        <label for="password1">Contraseña</label>
+        <input type="password" class="form-control" id="password1" name="password1" required>
+    </div>
+
+    <div class="form-group">
+        <label for="password2">Confirmar contraseña</label>
+        <input type="password" class="form-control" id="password2" name="password2" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width: 100%;">Registrarse</button>
+</form>
+
+<script>
+    async function registrarse(event) {
+        event.preventDefault();  // Previene el envío tradicional del formulario
+
+        const form = document.getElementById('registroForm');
+        const formData = new FormData(form);
+
+        // Recoge los datos del formulario en el formato que espera el serializador
+        const data = {
+            username: formData.get('username'),
+            email: formData.get('email'),
+            password: formData.get('password1'),  // Cambiado a password1
+            password2: formData.get('password2')   // Cambiado a password2
+        };
+
+        // Enviar la solicitud POST a la API de registro
+        try {
+            const response = await fetch("{% url 'autentificacion:api_registro' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                mostrarMensaje("Registro exitoso", "success");
+                // Redirige a la tienda después de 2 segundos
+                setTimeout(() => {
+                    window.location.href = "{% url 'Tienda' %}";
+                }, 2000);
+            } else {
+                // Mostrar errores de validación
+                if (result.password) {
+                    mostrarMensaje(result.password.join(", ") || "Error en el registro", "danger");
+                } else {
+                    mostrarMensaje("Error en el registro", "danger");
+                }
+                console.error(result);  // Imprimir los detalles del error para ayudar en la depuración
+            }
+        } catch (error) {
+            console.error("Error en el registro:", error);
+            mostrarMensaje("Ocurrió un error al registrar", "danger");
+        }
+    }
+
+    // Función para mostrar mensajes de éxito o error
+    function mostrarMensaje(mensaje, tipo) {
+        const messageContainer = document.getElementById('message-container');
+        messageContainer.innerHTML = `<div class="alert alert-${tipo} text-center" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px; padding: 8px 12px; font-size: 13px; margin: 10px auto; max-width: 300px;">${mensaje}</div>`;
+        setTimeout(() => messageContainer.innerHTML = '', 3000);  // Elimina el mensaje después de 3 segundos
+    }
+</script>
+
+{% endblock %}

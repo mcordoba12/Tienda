@@ -1,0 +1,44 @@
+{% extends 'ProyectoWebApp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Heading Section -->
+<section class="page-section clearfix">
+  <div class="container">
+    <div class="intro d-flex align-items-center flex-column flex-lg-row">
+      <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'ProyectoWebApp/img/principal.jpg' %}" alt="Imagen principal" style="width: 100%; max-width: 800px; height: auto;">
+      
+      <div class="intro-text bg-faded p-5 rounded text-center ml-lg-4">
+        <h2 class="section-heading mb-4">
+          <span class="section-heading-upper">Puntualidad</span>
+          <span class="section-heading-lower">El mejor stock</span>
+        </h2>
+        <p class="mb-3">
+          Tienda de productos de calidad, con un stock inigualable y una puntualidad en la entrega de los productos que no tiene rival.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Message Section -->
+<section class="page-section cta">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-9">
+        <div class="cta-inner text-center rounded bg-faded p-5">
+          <h2 class="section-heading mb-4">
+            <span class="section-heading-upper">Compromiso total</span>
+            <span class="section-heading-lower">Garantizado</span>
+          </h2>
+          <p class="mb-0">
+            Con más de 75 años de experiencia en nuestras entregas, tenemos los conocimientos y herramientas necesarios para llevar cualquier objeto a la puerta de su casa con puntualidad y profesionalidad.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura de Pedido</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .details, .items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .details td, .items td, .items th {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        .items th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        .summary {
+            text-align: right;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Factura</h1>
+
+    <table class="details">
+        <tr>
+            <td><strong>Cliente:</strong></td>
+            <td>{{ user.username }}</td>
+        </tr>
+        <tr>
+            <td><strong>N° de Pedido:</strong></td>
+            <td>{{ pedido.id }}</td>
+        </tr>
+        <tr>
+            <td><strong>Email:</strong></td>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <td><strong>Fecha:</strong></td>
+            <td>{{ pedido.fecha }}</td>
+        </tr>
+    </table>
+
+    <h2>Detalles del Pedido</h2>
+    <table class="items">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for linea in lineas_pedido %}
+            <tr>
+                <td>{{ linea.producto }}</td>
+                <td>{{ linea.cantidad }}</td>
+                <td>{{ linea.precio_unitario }}</td>
+                <td>{{ linea.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="summary">Total a Pagar</td>
+                <td class="summary">{{ pedido.total }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+</body>
+</html>

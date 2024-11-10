@@ -1,0 +1,198 @@
+<table class="table table-bordered table-dark table-hover" style="color: white; border-radius: 0.5rem; overflow: hidden; font-size: 0.9rem; width: 80%; margin: 0 auto; background-color: #f2f2f2;">
+    <thead class="thead-light" style="background-color: rgba(203, 70, 161, 0.962); color: white;">
+        <tr>
+            <th colspan="3" class="text-center">
+                <h5 class="mb-0">Carro de Compras</h5>
+            </th>
+        </tr>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Suma</th>
+        </tr>
+    </thead>
+
+    <tbody id="carro-body">
+        <!-- Este contenido será generado dinámicamente -->
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-center" style="background-color: rgba(203, 70, 161, 0.962); color: white;">
+                <strong>Total: $<span id="importe-total">0.00</span></strong>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" class="text-center">
+                <button onclick="hacerPedido()" class="btn btn-success" style="background-color: rgba(203, 70, 161, 0.962); border-color: rgba(203, 70, 161, 0.962);">Hacer pedido</button>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<script>
+document.addEventListener("DOMContentLoaded", cargarCarro);
+
+async function cargarCarro() {
+    try {
+        const response = await fetch('/carro/api/carro/');  // Asegúrate de que esta URL sea correcta
+        if (!response.ok) {
+            throw new Error("Error al cargar el carrito");
+        }
+        const data = await response.json();
+        const carroBody = document.getElementById('carro-body');
+        carroBody.innerHTML = '';
+
+        let total = 0;
+        data.items.forEach(item => {
+            total += item.cantidad * item.precio;
+
+            const row = `
+                <tr class="text-center" style="background-color: #fff; color: #333;">
+                    <td>${item.nombre}</td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button onclick="agregarProducto(${item.producto_id})" class="btn btn-xs btn-success" style="background-color: rgba(203, 70, 161, 0.962); border-color: rgba(203, 70, 161, 0.962); font-size: 0.75rem; padding: 0.25rem 0.5rem; margin-right: 5px;">+</button>
+                            ${item.cantidad}
+                            <button onclick="restarProducto(${item.producto_id})" class="btn btn-xs btn-danger" style="background-color: rgba(203, 70, 161, 0.962); border-color: rgba(203, 70, 161, 0.962); font-size: 0.75rem; padding: 0.25rem 0.5rem; margin-left: 5px;">-</button>
+                        </div>
+                    </td>
+                    <td>${(item.precio * item.cantidad).toFixed(2)} $</td>
+                </tr>
+            `;
+
+            carroBody.innerHTML += row;
+        });
+
+        document.getElementById('importe-total').textContent = total.toFixed(2);
+    } catch (error) {
+        console.error("Error al cargar el carrito:", error);
+        mostrarMensaje("Error al cargar el carrito", "danger");
+    }
+}
+
+
+async function agregarProducto(productoId) {
+    try {
+        const response = await fetch(`/carro/api/carro/agregar/${productoId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'  // Asegúrate de que estás usando CSRF correctamente
+            }
+        });
+
+            console.log(`Producto agregado al carrito: ${productoId}`);
+
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            mostrarMensaje(errorData.error || "Error al agregar producto al carro", "danger");
+            console.error(errorData);
+        } else {
+            mostrarMensaje("Producto agregado al carro", "success");
+            cargarCarro(); // Actualiza el carrito después de agregar
+        }
+    } catch (error) {
+        console.error("Error al agregar al carro:", error);
+        mostrarMensaje("Error al agregar producto al carro", "danger");
+    }
+}
+
+async function restarProducto(productoId) {
+    try {
+        const response = await fetch(`/carro/api/carro/restar/${productoId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+
+        if (response.ok) {
+            mostrarMensaje("Producto restado del carro", "success");
+            cargarCarro(); // Actualiza el carrito después de restar
+        } else {
+            const errorData = await response.json();
+            mostrarMensaje(errorData.error || "Error al restar producto del carro", "danger");
+            console.error(errorData);
+        }
+    } catch (error) {
+        console.error("Error al restar producto:", error);
+        mostrarMensaje("Error al restar producto del carro", "danger");
+    }
+}
+
+
+async function hacerPedido() {
+    try {
+        const csrfToken = '{{ csrf_token }}'; // Asegúrate de que el token CSRF esté correcto
+
+
+
+        const carrito = await obtenerCarrito(); // Esta función debería retornar los productos del carrito en un formato adecuado.
+
+        const lineasPedido = carrito.items.map(item => ({
+            producto: item.producto_id, // El ID del producto en el carrito
+            cantidad: item.cantidad // La cantidad de cada producto
+        }));
+
+
+        console.log("carrito:", carrito);
+        console.log("Líneas de pedido:", lineasPedido);
+
+
+
+        const response = await fetch('/pedidos/api/pedidos/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                lineas_pedido: lineasPedido // Enviar las líneas de pedido
+            })
+        });
+
+        console.log("Líneas de pedido:", lineasPedido);
+
+
+        if (response.ok) {
+            alert("Pedido realizado correctamente");
+            cargarCarro();  // Limpia el carrito después del pedido
+        } else {
+            const errorData = await response.json();
+            alert(errorData.error || "Error al hacer el pedido");
+        }
+    } catch (error) {
+        console.error("Error al realizar el pedido:", error);
+        alert("Ocurrió un error al hacer el pedido");
+    }
+}
+
+async function obtenerCarrito() {
+    try {
+        const response = await fetch('/carro/api/carro/');  // Asegúrate de que esta URL sea la correcta
+        if (!response.ok) {
+            throw new Error("Error al cargar el carrito");
+        }
+        const data = await response.json();
+        return data;  // Devuelve los datos del carrito
+    } catch (error) {
+        console.error("Error al obtener el carrito:", error);
+        throw error;  // Propaga el error
+    }
+}
+
+
+
+function mostrarMensaje(mensaje, tipo) {
+    const messageContainer = document.getElementById('message-container');
+    messageContainer.innerHTML = `
+        <div class="alert alert-${tipo} text-center" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px; padding: 8px 12px; font-size: 13px; margin: 10px auto; max-width: 300px;">
+            ${mensaje}
+        </div>
+    `;
+    setTimeout(() => messageContainer.innerHTML = '', 3000);  // Eliminar mensaje después de 3 segundos
+}
+</script>

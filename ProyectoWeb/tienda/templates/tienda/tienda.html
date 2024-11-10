@@ -1,0 +1,114 @@
+{% extends 'ProyectoWebApp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+
+    <!-- Mostrar mensajes de éxito -->
+    <div id="message-container"></div>
+
+    <!-- Contenedor para alinear el texto a la derecha -->
+    <div style="float: right;">
+        {% if request.user.is_authenticated %}
+            <!--- Si el usuario está autenticado -->
+            {% include "carro/widget.html" %}
+        {% else %}
+            <div class="alert alert-info text-center" style="background-color: #e7f1ff; color: #31708f; border: 1px solid #b6d4fe; border-radius: 5px; padding: 8px 12px; font-size: 13px; margin: 10px auto; max-width: 300px;">
+                <strong>¡Atención!</strong> Inicia sesión para agregar productos al carro.
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="row" id="product-list">
+        <!-- Los productos se cargarán dinámicamente aquí -->
+    </div>
+
+</div>
+
+<script>
+    async function cargarProductos() {
+        try {
+            const response = await fetch('/tienda/productos/');  // Asegúrate de que esta sea la URL correcta
+            if (!response.ok) {
+                throw new Error("Error en la respuesta de la API");
+            }
+            const productos = await response.json();
+            
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';  // Limpiar el contenedor
+
+            // Asegúrate de que productos no esté vacío
+            if (productos.length === 0) {
+                mostrarMensaje("No hay productos disponibles", "info");
+            } else {
+                productos.forEach(producto => {
+                    const productoHTML = `
+                        <div class="col-12 col-md-6 col-lg-4 mb-3">
+                            <div class="card d-flex flex-column h-100">
+                                <img src="${producto.imagen}" class="card-img-top" style="object-fit: cover; height: 200px;">
+                                <div class="card-body d-flex flex-column justify-content-between">
+                                    <h5 class="card-title text-center">${producto.nombre}</h5>
+                                    <p class="card-text text-center">$ ${producto.precio}</p>
+                                </div>
+                                <div class="card-footer text-center">
+                                <button onclick="agregarAlCarro(${producto.id})" class="btn btn-success">Agregar al carro</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    productList.innerHTML += productoHTML;
+                });
+            }
+        } catch (error) {
+            console.error("Error al cargar los productos:", error);
+            mostrarMensaje("Error al cargar los productos", "danger");
+        }
+    }
+    
+    async function agregarAlCarro(productoId) {
+        try {
+            const response = await fetch(`/carro/api/carro/agregar/${productoId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // Asegúrate de que estás usando CSRF correctamente
+                }
+            });
+    
+            if (response.ok) {
+                mostrarMensaje("Producto agregado al carro", "success");
+                // Opcional: cargarCarro();  // Actualiza el carrito si es necesario
+            } else {
+                const errorData = await response.json();
+                mostrarMensaje(errorData.error || "Error al agregar producto al carro", "danger");
+                console.error(errorData);
+            }
+        } catch (error) {
+            console.error("Error al agregar al carro:", error);
+            mostrarMensaje("Error al agregar producto al carro", "danger");
+        }
+    }
+    
+
+    // Mostrar mensaje de éxito o error
+    function mostrarMensaje(mensaje, tipo) {
+        const messageContainer = document.getElementById('message-container');
+        messageContainer.innerHTML = `
+            <div class="alert alert-${tipo} text-center" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px; padding: 8px 12px; font-size: 13px; margin: 10px auto; max-width: 300px;">
+                ${mensaje}
+            </div>
+        `;
+        setTimeout(() => messageContainer.innerHTML = '', 3000);  // Eliminar mensaje después de 3 segundos
+    }
+
+    // Llamar a cargarProductos cuando se carga la página
+    cargarProductos();
+</script>
+
+<script>
+    const csrfToken = '{{ csrf_token }}';  // Asegúrate de que estás obteniendo el token correctamente
+</script>
+
+
+{% endblock %}

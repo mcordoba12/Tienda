@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'ProyectoWebApp/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'ProyectoWebApp/css/gestion.css' %}" rel="stylesheet">
+    <title>Flamore - Gestión de Pedidos</title>
+</head>
+<body>
+
+    <!-- Header con Cierre de Sesión -->
+    <header class="site-header text-center text-white d-none d-lg-block">
+        <h1 class="site-heading">
+            <span class="site-heading-lower">Flamore</span>
+        </h1>
+        <div style="color: white; text-align: right; margin-right: 100px;">
+            {% if user.is_authenticated %}
+                <span style="font-size: 20px; font-weight: bold; color: #ffffff; margin-right: 15px; text-shadow: 1px 1px 2px #000000;">
+                    Hola, {{ user.username }}
+                </span>
+
+                <!-- Formulario de cierre de sesión con JavaScript para redirigir tras logout -->
+                <form id="logoutForm" style="display: inline;" onsubmit="cerrarSesion(event)">
+                    {% csrf_token %}
+                    <button type="submit" style="color: black; text-decoration: none; background-color: #ffffff; padding: 5px 10px; border: none; border-radius: 5px; box-shadow: 1px 1px 5px #888888; cursor: pointer;">
+                        Cerrar sesión
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'autentificacion:login_page' %}" style="color: #333; text-decoration: none; padding: 8px 12px; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 5px;">
+                    Iniciar sesión
+                </a>
+                &nbsp;&nbsp;&nbsp;
+                <a href="{% url 'autentificacion:registro_page' %}" style="color: white; text-decoration: none; padding: 8px 12px; background-color: #007bff; border: 1px solid #007bff; border-radius: 5px;">
+                    Registrarse
+                </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark py-lg-4" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="{% url 'Home' %}">Gestión de Pedidos</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item {% if request.path == '/' %}active{% endif %} px-lg-4">
+                        <a class="nav-link text-uppercase text-expanded" href="{% url 'Home' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item {% if request.path == '/tienda/' %}active{% endif %} px-lg-4">
+                        <a class="nav-link text-uppercase text-expanded" href="{% url 'Tienda' %}">Tienda</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer text-faded text-center py-5">
+        <div class="container">
+            <p class="m-0">© Gestión de Pedidos 2020</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'ProyectoWebApp/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'ProyectoWebApp/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <script>
+      async function cerrarSesion(event) {
+          event.preventDefault();  // Previene el envío tradicional del formulario
+
+          try {
+              const response = await fetch("{% url 'autentificacion:api_logout' %}", {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': '{{ csrf_token }}'
+                  }
+              });
+
+              if (response.ok) {
+                  window.location.href = "{% url 'Home' %}";  // Redirige a la página de inicio después de cerrar sesión
+              } else {
+                  console.error("Error en el cierre de sesión:", response);
+              }
+          } catch (error) {
+              console.error("Error en el cierre de sesión:", error);
+          }
+      }
+    </script>
+
+</body>
+</html>
