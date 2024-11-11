@@ -46,7 +46,7 @@
     <table class="details">
         <tr>
             <td><strong>Cliente:</strong></td>
-            <td>{{ user.username }}</td>
+            <td>{{ user.username }}</td>  <!-- Nombre del cliente -->
         </tr>
         <tr>
             <td><strong>N° de Pedido:</strong></td>
@@ -54,39 +54,39 @@
         </tr>
         <tr>
             <td><strong>Email:</strong></td>
-            <td>{{ user.email }}</td>
+            <td>{{ user.email|default:"Email no disponible" }}</td>  <!-- Email del cliente con valor por defecto si está vacío -->
         </tr>
         <tr>
             <td><strong>Fecha:</strong></td>
-            <td>{{ pedido.fecha }}</td>
+            <td>{{ pedido.created_at|date:"d M Y H:i" }}</td>  <!-- Fecha del pedido -->
         </tr>
     </table>
 
     <h2>Detalles del Pedido</h2>
     <table class="items">
         <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-                <th>Total</th>
-            </tr>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Total</th>
+        </tr>
         </thead>
         <tbody>
-            {% for linea in lineas_pedido %}
-            <tr>
-                <td>{{ linea.producto }}</td>
-                <td>{{ linea.cantidad }}</td>
-                <td>{{ linea.precio_unitario }}</td>
-                <td>{{ linea.total }}</td>
-            </tr>
-            {% endfor %}
+        {% for linea in lineas_pedido %}
+        <tr>
+            <td>{{ linea.producto.nombre }}</td>  <!-- Nombre del producto -->
+            <td>{{ linea.cantidad }}</td>
+            <td>{{ linea.producto.precio|floatformat:2 }}</td>  <!-- Precio unitario del producto -->
+            <td>{{ linea.total|floatformat:2 }}</td>  <!-- Total por línea de pedido -->
+        </tr>
+        {% endfor %}
         </tbody>
         <tfoot>
-            <tr>
-                <td colspan="3" class="summary">Total a Pagar</td>
-                <td class="summary">{{ pedido.total }}</td>
-            </tr>
+        <tr>
+            <td colspan="3" class="summary">Total a Pagar</td>
+            <td class="summary">{{ pedido.total|floatformat:2 }}</td>  <!-- Total del pedido -->
+        </tr>
         </tfoot>
     </table>
 </div>

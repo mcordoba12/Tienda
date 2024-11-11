@@ -313,4 +313,12 @@ ul.errorlist{
 }
 
 
+a {
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+}
 

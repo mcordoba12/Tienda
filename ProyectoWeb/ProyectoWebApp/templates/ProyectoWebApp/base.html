@@ -9,36 +9,39 @@
     <title>Flamore - Gestión de Pedidos</title>
 </head>
 <body>
+<!-- Header con Cierre de Sesión -->
+<header class="site-header text-center text-white d-none d-lg-block">
+    <h1 class="site-heading">
+        <span class="site-heading-lower">Flamore</span>
+    </h1>
+    <div style="color: white; text-align: right; margin-right: 100px;">
+        {% if user.is_authenticated %}
+        <span style="font-size: 20px; font-weight: bold; color: #ffffff; margin-right: 15px; text-shadow: 1px 1px 2px #000000;">
+                Hola, {{ user.username }}
+            </span>
+        <!-- Formulario de cierre de sesión con JavaScript para redirigir tras logout -->
+        <form id="logoutForm" style="display: inline;" onsubmit="cerrarSesion(event)">
+            {% csrf_token %}
+            <button type="submit" style="color: black; text-decoration: none; background-color: #ffffff; padding: 5px 10px; border: none; border-radius: 5px; box-shadow: 1px 1px 5px #888888; cursor: pointer;">
+                Cerrar sesión
+            </button>
+        </form>
+        <!-- Botón Administrador -->
+        <a href="/admin/login/?next=/admin/" style="color: white; text-decoration: none; padding: 8px 12px; background-color: #007bff; border: 1px solid #007bff; border-radius: 5px;">
+            Administrador
+        </a>
+        {% else %}
+        <a href="{% url 'autentificacion:login_page' %}" style="color: #333; text-decoration: none; padding: 8px 12px; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 5px;">
+            Iniciar sesión
+        </a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="{% url 'autentificacion:registro_page' %}" style="color: white; text-decoration: none; padding: 8px 12px; background-color: #007bff; border: 1px solid #007bff; border-radius: 5px;">
+            Registrarse
+        </a>
+        {% endif %}
+    </div>
+</header>
 
-    <!-- Header con Cierre de Sesión -->
-    <header class="site-header text-center text-white d-none d-lg-block">
-        <h1 class="site-heading">
-            <span class="site-heading-lower">Flamore</span>
-        </h1>
-        <div style="color: white; text-align: right; margin-right: 100px;">
-            {% if user.is_authenticated %}
-                <span style="font-size: 20px; font-weight: bold; color: #ffffff; margin-right: 15px; text-shadow: 1px 1px 2px #000000;">
-                    Hola, {{ user.username }}
-                </span>
-
-                <!-- Formulario de cierre de sesión con JavaScript para redirigir tras logout -->
-                <form id="logoutForm" style="display: inline;" onsubmit="cerrarSesion(event)">
-                    {% csrf_token %}
-                    <button type="submit" style="color: black; text-decoration: none; background-color: #ffffff; padding: 5px 10px; border: none; border-radius: 5px; box-shadow: 1px 1px 5px #888888; cursor: pointer;">
-                        Cerrar sesión
-                    </button>
-                </form>
-            {% else %}
-                <a href="{% url 'autentificacion:login_page' %}" style="color: #333; text-decoration: none; padding: 8px 12px; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 5px;">
-                    Iniciar sesión
-                </a>
-                &nbsp;&nbsp;&nbsp;
-                <a href="{% url 'autentificacion:registro_page' %}" style="color: white; text-decoration: none; padding: 8px 12px; background-color: #007bff; border: 1px solid #007bff; border-radius: 5px;">
-                    Registrarse
-                </a>
-            {% endif %}
-        </div>
-    </header>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark py-lg-4" id="mainNav">
