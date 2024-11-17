@@ -1,4 +1,4 @@
-# Tienda en Línea - Proyecto Web con Django Channels
+# Tienda en Línea 
 
 ## Integrantes:
 
