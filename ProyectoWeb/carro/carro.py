@@ -33,17 +33,20 @@ class Carro:
             del self.carro[producto.id]  # lo eliminamos
             self.guardarCarro()
 
-    def restar_producto(self, producto):  # método para restar productos al carro
-        for key, value in self.carro.items():  # recorremos el carro
-            if key == str(producto.id):  # si el producto ya está en el carro
-                value["cantidad"] -= 1  # restamos la cantidad del producto
-                value["precio"] = str(float(value["precio"]) - producto.precio)
+    def restar_producto(self, producto):
+        for key, value in self.carro.items():
+            if key == str(producto.id):
+                value["cantidad"] -= 1  # Restamos la cantidad del producto
 
-                if value["cantidad"] < 1:  # si la cantidad del producto es menor a 1
-                    self.eliminar(producto)  # eliminamos el producto del carro   
+                # Recalculamos el precio total de este producto
+                value["precio"] = str(float(producto.precio) * value["cantidad"])
 
+                # Si la cantidad es menor a 1, eliminamos el producto del carro
+                if value["cantidad"] < 1:
+                    self.eliminar(producto)
                 break
         self.guardarCarro()
+
 
     def limpiar_carro(self):  # método para limpiar el carro
         self.session["carro"] = {}  # limpiamos el carro

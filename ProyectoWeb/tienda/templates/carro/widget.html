@@ -14,6 +14,8 @@
 
     <tbody id="carro-body">
         <!-- Este contenido será generado dinámicamente -->
+
+        
     </tbody>
 
     <tfoot>
@@ -29,6 +31,8 @@
         </tr>
     </tfoot>
 </table>
+
+
 
 <script>
 document.addEventListener("DOMContentLoaded", cargarCarro);
@@ -194,5 +198,47 @@ function mostrarMensaje(mensaje, tipo) {
         </div>
     `;
     setTimeout(() => messageContainer.innerHTML = '', 3000);  // Eliminar mensaje después de 3 segundos
+}
+
+
+
+async function actualizarCarro() {
+    try {
+        const response = await fetch('/carro/api/carro/');
+        if (!response.ok) {
+            throw new Error("Error al obtener los datos del carrito");
+        }
+        const data = await response.json();
+
+        const carroBody = document.getElementById('carro-body');
+        carroBody.innerHTML = '';
+
+        let total = 0;
+
+        data.items.forEach(item => {
+            total += item.cantidad * item.precio;
+
+            const row = `
+                <tr class="text-center" style="background-color: #fff; color: #333;">
+                    <td>${item.nombre}</td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button onclick="agregarProducto(${item.producto_id})" class="btn btn-xs btn-success" style="margin-right: 5px;">+</button>
+                            ${item.cantidad}
+                            <button onclick="restarProducto(${item.producto_id})" class="btn btn-xs btn-danger" style="margin-left: 5px;">-</button>
+                        </div>
+                    </td>
+                    <td>${(item.precio * item.cantidad).toFixed(2)} $</td>
+                </tr>
+            `;
+
+            carroBody.innerHTML += row;
+        });
+
+        document.getElementById('importe-total').textContent = total.toFixed(2);
+    } catch (error) {
+        console.error("Error al actualizar el carrito:", error);
+        mostrarMensaje("Error al actualizar el carrito", "danger");
+    }
 }
 </script>

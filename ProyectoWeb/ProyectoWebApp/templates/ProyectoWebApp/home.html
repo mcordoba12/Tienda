@@ -6,17 +6,26 @@
 <!-- Heading Section -->
 <section class="page-section clearfix">
   <div class="container">
-    <div class="intro d-flex align-items-center flex-column flex-lg-row">
-      <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'ProyectoWebApp/img/principal.jpg' %}" alt="Imagen principal" style="width: 100%; max-width: 800px; height: auto;">
-      
-      <div class="intro-text bg-faded p-5 rounded text-center ml-lg-4">
-        <h2 class="section-heading mb-4">
-          <span class="section-heading-upper">Puntualidad</span>
-          <span class="section-heading-lower">El mejor stock</span>
-        </h2>
-        <p class="mb-3">
-          Tienda de productos de calidad, con un stock inigualable y una puntualidad en la entrega de los productos que no tiene rival.
-        </p>
+    <div class="row align-items-center">
+      <!-- Imagen -->
+      <div class="col-lg-6">
+        <img class="intro-img img-fluid rounded" 
+             src="{% static 'ProyectoWebApp/img/principal.jpg' %}" 
+             alt="Imagen principal" 
+             style="width: 100%; height: auto;">
+      </div>
+
+      <!-- Texto -->
+      <div class="col-lg-6">
+        <div class="intro-text bg-faded p-5 rounded text-center">
+          <h2 class="section-heading mb-4">
+            <span class="section-heading-upper">Puntualidad</span>
+            <span class="section-heading-lower">El mejor stock</span>
+          </h2>
+          <p class="mb-3">
+            Tienda de productos de calidad, con un stock inigualable y una puntualidad en la entrega de los productos que no tiene rival.
+          </p>
+        </div>
       </div>
     </div>
   </div>

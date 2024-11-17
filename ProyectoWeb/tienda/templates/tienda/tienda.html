@@ -27,6 +27,7 @@
 </div>
 
 <script>
+    
     async function cargarProductos() {
         try {
             const response = await fetch('/tienda/productos/');  // Asegúrate de que esta sea la URL correcta
@@ -78,7 +79,7 @@
     
             if (response.ok) {
                 mostrarMensaje("Producto agregado al carro", "success");
-                // Opcional: cargarCarro();  // Actualiza el carrito si es necesario
+                cargarCarro();  // Actualiza el carrito si es necesario
             } else {
                 const errorData = await response.json();
                 mostrarMensaje(errorData.error || "Error al agregar producto al carro", "danger");
