@@ -76,6 +76,5 @@ def enviar_mail(pedido, lineas_pedido, nombreusuario, email):
 
 @login_required
 def historial_compras(request):
-    # Recuperar los pedidos del usuario autenticado
     pedidos = Pedido.objects.filter(user=request.user).prefetch_related('lineas_pedido__producto').order_by('-created_at')
     return render(request, 'pedidos/historial.html', {'pedidos': pedidos})
