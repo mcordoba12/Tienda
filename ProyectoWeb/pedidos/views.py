@@ -7,9 +7,12 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
+
+from django.contrib.auth.decorators import login_required
+
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
@@ -69,3 +72,10 @@ def enviar_mail(pedido, lineas_pedido, nombreusuario, email):
     mensaje_texto = strip_tags(mensaje)  # Convierte el mensaje a texto plano
     from_email = 'angela6309gonzalez@gmail.com'  # Cambia por tu correo de origen
     send_mail(asunto, mensaje_texto, from_email, [email], html_message=mensaje)
+
+
+@login_required
+def historial_compras(request):
+    # Recuperar los pedidos del usuario autenticado
+    pedidos = Pedido.objects.filter(user=request.user).prefetch_related('lineas_pedido__producto').order_by('-created_at')
+    return render(request, 'pedidos/historial.html', {'pedidos': pedidos})

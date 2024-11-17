@@ -61,6 +61,9 @@
                 <li class="nav-item {% if request.path == '/tienda/' %}active{% endif %} px-lg-4">
                     <a class="nav-link text-uppercase text-expanded" href="{% url 'Tienda' %}">Tienda</a>
                 </li>
+                <li class="nav-item {% if request.path == '/pedidos/historial/' %}active{% endif %} px-lg-4">
+                    <a class="nav-link text-uppercase text-expanded" href="{% url 'historial_compras' %}">Historial</a>
+                </li>
             </ul>
         </div>
         
