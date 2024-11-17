@@ -30,6 +30,13 @@
             </td>
         </tr>
     </tfoot>
+
+    <tr>
+        <td colspan="3" class="text-center">
+            <div id="pedido-status" class="mt-2"></div> <!-- Contenedor para mostrar el mensaje -->
+        </td>
+    </tr>
+    
 </table>
 
 
@@ -132,20 +139,12 @@ async function hacerPedido() {
     try {
         const csrfToken = '{{ csrf_token }}'; // Asegúrate de que el token CSRF esté correcto
 
-
-
         const carrito = await obtenerCarrito(); // Esta función debería retornar los productos del carrito en un formato adecuado.
 
         const lineasPedido = carrito.items.map(item => ({
             producto: item.producto_id, // El ID del producto en el carrito
             cantidad: item.cantidad // La cantidad de cada producto
         }));
-
-
-        console.log("carrito:", carrito);
-        console.log("Líneas de pedido:", lineasPedido);
-
-
 
         const response = await fetch('/pedidos/api/pedidos/', {
             method: 'POST',
@@ -158,21 +157,19 @@ async function hacerPedido() {
             })
         });
 
-        console.log("Líneas de pedido:", lineasPedido);
-
-
         if (response.ok) {
-            alert("Pedido realizado correctamente");
-            cargarCarro();  // Limpia el carrito después del pedido
+            mostrarMensaje("Pedido realizado correctamente", "success");
+            cargarCarro(); // Limpia el carrito después del pedido
         } else {
             const errorData = await response.json();
-            alert(errorData.error || "Error al hacer el pedido");
+            mostrarMensaje(errorData.error || "Error al hacer el pedido", "danger");
         }
     } catch (error) {
         console.error("Error al realizar el pedido:", error);
-        alert("Ocurrió un error al hacer el pedido");
+        mostrarMensaje("Ocurrió un error al hacer el pedido", "danger");
     }
 }
+
 
 async function obtenerCarrito() {
     try {
@@ -191,14 +188,19 @@ async function obtenerCarrito() {
 
 
 function mostrarMensaje(mensaje, tipo) {
-    const messageContainer = document.getElementById('message-container');
+    const messageContainer = document.getElementById('pedido-status');
     messageContainer.innerHTML = `
-        <div class="alert alert-${tipo} text-center" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px; padding: 8px 12px; font-size: 13px; margin: 10px auto; max-width: 300px;">
+        <div class="alert alert-${tipo} text-center" style="padding: 8px 12px; font-size: 13px; margin: 10px auto; max-width: 300px;">
             ${mensaje}
         </div>
     `;
-    setTimeout(() => messageContainer.innerHTML = '', 3000);  // Eliminar mensaje después de 3 segundos
+
+    // Opcional: eliminar el mensaje después de unos segundos
+    setTimeout(() => {
+        messageContainer.innerHTML = '';
+    }, 10000); // Elimina el mensaje después de 5 segundos
 }
+
 
 
 
@@ -240,5 +242,7 @@ async function actualizarCarro() {
         console.error("Error al actualizar el carrito:", error);
         mostrarMensaje("Error al actualizar el carrito", "danger");
     }
+
+    
 }
 </script>
