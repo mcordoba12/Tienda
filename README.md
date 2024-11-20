@@ -86,5 +86,9 @@ La solución utiliza **Django Channels** para manejar la arquitectura **ASGI**, 
 
 6. Accede a la tienda en http://127.0.0.1:9000.
 
-7. Uso de WebSockets
+7. o accede simolemente con
+   ```bash
+    python manage.py runserver
+    
+8. Uso de WebSockets
 Django Channels habilita la comunicación en tiempo real en la aplicación. Daphne es el servidor ASGI encargado de manejar estas conexiones. Asegúrate de que los consumidores (consumers.py) estén correctamente configurados para manejar eventos relacionados con WebSockets, como actualizaciones del carrito en tiempo real o notificaciones de pedidos.
