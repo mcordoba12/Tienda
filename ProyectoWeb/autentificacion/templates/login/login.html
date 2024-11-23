@@ -18,6 +18,13 @@
 
     <button onclick="loginUser()" class="btn btn-success" style="width: 100%;">Iniciar Sesión</button>
 
+    <!-- Botón para iniciar sesión como administrador -->
+    <div style="text-align: center; margin-top: 15px;">
+        <a href="{% url 'admin:login' %}" class="btn btn-outline-info btn-sm">
+            Iniciar sesión como administrador
+        </a>
+    </div>
+
     <!-- Contenedor para mensajes -->
     <div id="message-container"></div>
 </div>
@@ -32,7 +39,7 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRFToken": "{{ csrf_token }}"
+                    "X-CSRFToken": "{{ csrf_token }}",
                 },
                 body: JSON.stringify({ username, password })
             });
