@@ -30,12 +30,20 @@
         <input type="password" class="form-control" id="password2" name="password2" required>
     </div>
 
+    <!-- Nuevo campo para registrar como administrador -->
+    <div class="form-group">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin">
+            <label class="form-check-label" for="is_admin">Registrar como administrador</label>
+        </div>
+    </div>
+
     <button type="submit" class="btn btn-primary" style="width: 100%;">Registrarse</button>
 </form>
 
 <script>
     async function registrarse(event) {
-        event.preventDefault();  // Previene el envío tradicional del formulario
+        event.preventDefault(); // Previene el envío tradicional del formulario
 
         const form = document.getElementById('registroForm');
         const formData = new FormData(form);
@@ -44,8 +52,9 @@
         const data = {
             username: formData.get('username'),
             email: formData.get('email'),
-            password: formData.get('password1'),  // Cambiado a password1
-            password2: formData.get('password2')   // Cambiado a password2
+            password: formData.get('password1'), // Cambiado a password1
+            password2: formData.get('password2'), // Cambiado a password2
+            is_admin: formData.get('is_admin') ? true : false // Recoge si el checkbox está marcado
         };
 
         // Enviar la solicitud POST a la API de registro
@@ -73,7 +82,7 @@
                 } else {
                     mostrarMensaje("Error en el registro", "danger");
                 }
-                console.error(result);  // Imprimir los detalles del error para ayudar en la depuración
+                console.error(result); // Imprimir los detalles del error para ayudar en la depuración
             }
         } catch (error) {
             console.error("Error en el registro:", error);
@@ -85,7 +94,7 @@
     function mostrarMensaje(mensaje, tipo) {
         const messageContainer = document.getElementById('message-container');
         messageContainer.innerHTML = `<div class="alert alert-${tipo} text-center" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px; padding: 8px 12px; font-size: 13px; margin: 10px auto; max-width: 300px;">${mensaje}</div>`;
-        setTimeout(() => messageContainer.innerHTML = '', 3000);  // Elimina el mensaje después de 3 segundos
+        setTimeout(() => (messageContainer.innerHTML = ''), 3000); // Elimina el mensaje después de 3 segundos
     }
 </script>
 

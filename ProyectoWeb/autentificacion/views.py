@@ -13,9 +13,21 @@ class RegistroView(APIView):
     def post(self, request):
         serializer = RegistroSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()  # Guarda el usuario
-            login(request, user)  # Loguea al usuario automáticamente
+            # Guardar el usuario
+            user = serializer.save()
+            
+            # Verificar si se incluye el parámetro is_admin
+            is_admin = request.data.get('is_admin', False)
+            if is_admin and request.user.is_authenticated and request.user.is_superuser:
+                # Asignar permisos de administrador si la solicitud proviene de un superusuario
+                user.is_staff = True
+                user.is_superuser = True
+                user.save()
+
+            # Loguear al usuario automáticamente
+            login(request, user)
             return Response({"message": "Usuario registrado correctamente"}, status=status.HTTP_201_CREATED)
+
         print(serializer.errors)  # Para ver errores en la consola del servidor
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -17,8 +17,16 @@
     <div style="color: white; text-align: right; margin-right: 100px;">
         {% if user.is_authenticated %}
         <span style="font-size: 20px; font-weight: bold; color: #ffffff; margin-right: 15px; text-shadow: 1px 1px 2px #000000;">
-                Hola, {{ user.username }}
-            </span>
+            Hola, {{ user.username }}
+        </span>
+    
+        <!-- Mostrar botón de administración solo si el usuario es admin -->
+        {% if user.is_staff %}
+            <a href="/admin/" style="color: black; text-decoration: none; background-color: #ffffff; padding: 5px 10px; border: none; border-radius: 5px; box-shadow: 1px 1px 5px #888888; cursor: pointer; margin-right: 10px;">
+                Ir al Admin
+            </a>
+        {% endif %}
+    
         <!-- Formulario de cierre de sesión con JavaScript para redirigir tras logout -->
         <form id="logoutForm" style="display: inline;" onsubmit="cerrarSesion(event)">
             {% csrf_token %}
@@ -26,6 +34,7 @@
                 Cerrar sesión
             </button>
         </form>
+    
         {% else %}
         <!-- Botón Iniciar sesión (Fondo blanco, texto negro) -->
         <a href="{% url 'autentificacion:login_page' %}" style="color: black; text-decoration: none; padding: 8px 12px; background-color: white; border: 1px solid #ccc; border-radius: 5px;">
@@ -57,9 +66,12 @@
                 <li class="nav-item {% if request.path == '/tienda/' %}active{% endif %} px-lg-4">
                     <a class="nav-link text-uppercase text-expanded" href="{% url 'Tienda' %}">Tienda</a>
                 </li>
+                {% if request.user.is_authenticated %}
                 <li class="nav-item {% if request.path == '/pedidos/historial/' %}active{% endif %} px-lg-4">
                     <a class="nav-link text-uppercase text-expanded" href="{% url 'historial_compras' %}">Historial</a>
                 </li>
+                {% endif %}
+                
             </ul>
         </div>
     </div>
