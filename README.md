@@ -59,6 +59,14 @@ La solución utiliza **Django Channels** para manejar la arquitectura **ASGI**, 
 
 ---
 
+## **Requisitos Previos**
+1. **Python 3.x** instalado en tu sistema.  
+2. Administrador de paquetes `pip`.  
+3. **Git** para clonar el repositorio.  
+4. Virtualenv para crear entornos virtuales.  
+
+---
+
 ## Instalación
 
 1. Clona el repositorio:
